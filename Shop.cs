@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
@@ -6,7 +6,7 @@ using Photon.Pun;
 
 public class Shop : MonoBehaviour
 {
-	public GameObject weaponsPortal;
+    public GameObject weaponsPortal;
 
     private bool shopIsOpen = false;
 
@@ -40,36 +40,14 @@ public class Shop : MonoBehaviour
         lockedItems.Sort ();
     }
 
-    private void Update() {
-        if (shopIsOpen) {
-             // check on available items in shop
-            for (int i = 0; i < 14; i++) {
-                Transform item = gameObject.transform.GetChild (5).GetChild (i);
-
-                if (lockedItems.BinarySearch (System.Convert.ToInt32 (item.gameObject.name.Remove (0, 4))) > -1) // if locked
-                    continue;
-
-                // price of i item in shop
-                short price = System.Convert.ToInt16 (item.GetChild (3).GetComponent <Text> ().text.TrimStart ('£'));
-
-                if (GameManager.inst.myPlayerData.money < price) { // if we don't have money for buy
-                    item.GetComponent <Image> ().color = new Color (0.2039216f, 0.345098f, 0.4470588f, 0.1882353f / 2);
-                    item.GetChild (0).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f / 2);
-                    item.GetChild (1).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f / 2);
-                } else {
-                    item.GetComponent <Image> ().color = new Color (0.2039216f, 0.345098f, 0.4470588f, 0.1882353f);
-                    item.GetChild (0).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f);
-                    item.GetChild (1).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f);
-                }
-            }
-        }
-    }
-
     public void ShopOpenAndClose () {
-        if (shopIsOpen)
+        if (shopIsOpen) {
             animeShopButton.Play ("ShopClose");
-        else
+        }
+        else {
             animeShopButton.Play ("ShopOpen");
+            StartCoroutine (UpdatingItemsStates ());
+        }
 
         shopIsOpen = !shopIsOpen;
     }
@@ -102,6 +80,35 @@ public class Shop : MonoBehaviour
         script.OrderOfSpawn ((byte) itemID);
 
         ShopOpenAndClose ();
+    }
+
+    IEnumerator UpdatingItemsStates () {
+        while (shopIsOpen)
+        {
+            // check on available items in shop
+            for (int i = 0; i < 14; i++) {
+                // item in shop
+                Transform item = gameObject.transform.GetChild (5).GetChild (i);
+
+                if (lockedItems.BinarySearch (System.Convert.ToInt32 (item.gameObject.name.Remove (0, 4))) > -1) // if locked
+                    continue;
+
+                // price of i item in shop
+                short price = System.Convert.ToInt16 (item.GetChild (3).GetComponent <Text> ().text.TrimStart ('£'));
+
+                if (GameManager.inst.myPlayerData.money < price) { // if we don't have money for buy
+                    item.GetComponent <Image> ().color = new Color (0.2039216f, 0.345098f, 0.4470588f, 0.1882353f / 2);
+                    item.GetChild (0).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f / 2);
+                    item.GetChild (1).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f / 2);
+                } else {
+                    item.GetComponent <Image> ().color = new Color (0.2039216f, 0.345098f, 0.4470588f, 0.1882353f);
+                    item.GetChild (0).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f);
+                    item.GetChild (1).GetComponent <Image> ().color = new Color (1f, 1f, 1f, 0.8941177f);
+                }
+            }
+
+            yield return new WaitForSeconds (0.1f);
+        }
     }
 
     IEnumerator WaitUntilSpawn (int itemID) {
