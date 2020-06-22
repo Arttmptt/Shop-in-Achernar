@@ -1,24 +1,23 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using Photon.Pun;
 
 public class Shop : MonoBehaviour
 {
     public GameObject weaponsPortal;
-
-    private bool shopIsOpen = false;
+    
+    public Animation animeShopButton;
 
     private Text price;
     public short[] pricesOfWeapons;
 
-    public Animation animeShopButton;
-
     private List<int> lockedItems = new List<int>();
-
+    private bool shopIsOpen = false;
+    
     private void Start() {
-        // check on available items in shop
+        // check on locked items in shop and add his in cache (lockedItems)
         SaveSystem.sv.availableWeaponsInShop.Sort ();
 
         for (int i = 0; i < 14; i++) {
@@ -51,13 +50,14 @@ public class Shop : MonoBehaviour
 
         shopIsOpen = !shopIsOpen;
     }
-
-    public void CashingPrice (Text price) =>
+    
+    public void CachingPrice (Text price) =>
         this.price = price;
 
-	public void BuyWeapon (int itemID) {
+    public void BuyWeapon (int itemID) {
+    	// we take price from UI
         short price = System.Convert.ToInt16 (this.price.text.TrimStart ('£'));
-        // sound
+        // sound of click if we have money
         AudioSystem.inst.Click(GameManager.inst.myPlayerData.money >= price && lockedItems.BinarySearch (itemID) < 0);
         // exit if we dont have money, or this item is locked for us
         if (GameManager.inst.myPlayerData.money < price || lockedItems.BinarySearch (itemID) > -1)
