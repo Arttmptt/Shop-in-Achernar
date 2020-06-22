@@ -72,11 +72,11 @@ public class Shop : MonoBehaviour
             return;
         }
         // spawn buyed item
-		GameObject newPortal = PhotonNetwork.Instantiate (weaponsPortal.name
+	GameObject newPortal = PhotonNetwork.Instantiate (weaponsPortal.name
         , GameManager.inst.myPlayerData.gameObject.transform.position + new Vector3 (0.45f * ((GameManager.inst.myCharacterControl.facingRight) ? 1 : -1), 0.1f, 0)
         , Quaternion.identity);
         WeaponsPortal script = newPortal.GetComponent <WeaponsPortal> ();
-		script.pView.RPC ("SpawnOfSpawner", RpcTarget.AllBuffered, false);
+	script.pView.RPC ("SpawnOfSpawner", RpcTarget.AllBuffered, false);
         script.OrderOfSpawn ((byte) itemID);
 
         ShopOpenAndClose ();
@@ -117,11 +117,11 @@ public class Shop : MonoBehaviour
             yield return new WaitForSeconds (0.4f);
         }
         // spawn buyed item
-		GameObject newPortal = PhotonNetwork.Instantiate (weaponsPortal.name
+	GameObject newPortal = PhotonNetwork.Instantiate (weaponsPortal.name
         , GameManager.inst.myPlayerData.gameObject.transform.position + new Vector3 (0.45f * ((GameManager.inst.myCharacterControl.facingRight) ? 1 : -1), 0.1f, 0)
         , Quaternion.identity);
         WeaponsPortal script = newPortal.GetComponent <WeaponsPortal> ();
-		script.pView.RPC ("SpawnOfSpawner", RpcTarget.AllBuffered, false);
+	script.pView.RPC ("SpawnOfSpawner", RpcTarget.AllBuffered, false);
         script.OrderOfSpawn ((byte) itemID);
     }
 }
